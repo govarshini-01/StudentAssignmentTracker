@@ -111,9 +111,12 @@ def complete_assignment(assignments):
 
     for assignment in assignments:
         if assignment["id"] == assignment_id:
+            if assignment["completed"]:
+                print("This assignment is already completed.")
+                return
+
             assignment["completed"] = True
             save_assignments(assignments)
-
             print("Assignment marked as completed!")
             return
 
