@@ -83,12 +83,15 @@ def update_assignment(assignments):
 
     for assignment in assignments:
         if assignment["id"] == assignment_id:
-            assignment["title"] = input(
-                "Enter new title: "
-            )
-            assignment["subject"] = input(
-                "Enter new subject: "
-            )
+            title = input("Enter new title: ").strip()
+            subject = input("Enter new subject: ").strip()
+
+            if not title or not subject:
+                print("Title and subject cannot be empty.")
+                return
+
+            assignment["title"] = title
+            assignment["subject"] = subject
 
             save_assignments(assignments)
             print("Assignment updated successfully!")
