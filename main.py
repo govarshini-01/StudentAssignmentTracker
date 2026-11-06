@@ -18,25 +18,19 @@ def save_tasks(tasks):
 
 
 def create_task(tasks):
-    name = input("Enter task name: ")
-    subject = input("Enter subject: ")
-    deadline = input("Enter deadline: ")
-
     task = {
         "id": max([t["id"] for t in tasks], default=0) + 1,
-        "name": name,
-        "subject": subject,
-        "deadline": deadline,
+        "name": input("Enter task name: "),
+        "subject": input("Enter subject: "),
+        "deadline": input("Enter deadline: "),
         "status": "Pending"
     }
-
     tasks.append(task)
     save_tasks(tasks)
     print("Task created successfully!")
 
 
 def view_tasks(tasks):
-    print("\n--- Student Tasks ---")
     if not tasks:
         print("No tasks available.")
     for task in tasks:
@@ -45,20 +39,35 @@ def view_tasks(tasks):
 
 def update_task(tasks):
     view_tasks(tasks)
-
     if not tasks:
         return
 
-    task_id = int(input("\nEnter Task ID to update: "))
+    task_id = int(input("Enter Task ID to update: "))
 
     for task in tasks:
         if task["id"] == task_id:
             task["name"] = input("Enter new task name: ")
             task["subject"] = input("Enter new subject: ")
             task["deadline"] = input("Enter new deadline: ")
-
             save_tasks(tasks)
             print("Task updated successfully!")
+            return
+
+    print("Task ID not found!")
+
+
+def complete_task(tasks):
+    view_tasks(tasks)
+    if not tasks:
+        return
+
+    task_id = int(input("Enter Task ID to complete: "))
+
+    for task in tasks:
+        if task["id"] == task_id:
+            task["status"] = "Completed"
+            save_tasks(tasks)
+            print("Task completed successfully!")
             return
 
     print("Task ID not found!")
@@ -72,7 +81,8 @@ def main():
         print("1. Create Task")
         print("2. View Tasks")
         print("3. Update Task")
-        print("4. Exit")
+        print("4. Complete Task")
+        print("5. Exit")
 
         choice = input("Enter choice: ")
 
@@ -83,6 +93,8 @@ def main():
         elif choice == "3":
             update_task(tasks)
         elif choice == "4":
+            complete_task(tasks)
+        elif choice == "5":
             break
         else:
             print("Invalid choice!")
