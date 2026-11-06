@@ -23,7 +23,7 @@ def create_task(tasks):
     deadline = input("Enter deadline: ")
 
     task = {
-        "id": len(tasks) + 1,
+        "id": max([t["id"] for t in tasks], default=0) + 1,
         "name": name,
         "subject": subject,
         "deadline": deadline,
@@ -43,6 +43,27 @@ def view_tasks(tasks):
         print(task)
 
 
+def update_task(tasks):
+    view_tasks(tasks)
+
+    if not tasks:
+        return
+
+    task_id = int(input("\nEnter Task ID to update: "))
+
+    for task in tasks:
+        if task["id"] == task_id:
+            task["name"] = input("Enter new task name: ")
+            task["subject"] = input("Enter new subject: ")
+            task["deadline"] = input("Enter new deadline: ")
+
+            save_tasks(tasks)
+            print("Task updated successfully!")
+            return
+
+    print("Task ID not found!")
+
+
 def main():
     tasks = load_tasks()
 
@@ -50,7 +71,8 @@ def main():
         print("\n===== STUDENT TASK MANAGEMENT =====")
         print("1. Create Task")
         print("2. View Tasks")
-        print("3. Exit")
+        print("3. Update Task")
+        print("4. Exit")
 
         choice = input("Enter choice: ")
 
@@ -59,6 +81,8 @@ def main():
         elif choice == "2":
             view_tasks(tasks)
         elif choice == "3":
+            update_task(tasks)
+        elif choice == "4":
             break
         else:
             print("Invalid choice!")
