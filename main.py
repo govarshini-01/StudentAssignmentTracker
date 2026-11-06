@@ -1,159 +1,91 @@
+
 import json
-from datetime import datetime
-from pathlib import Path
+import os
 
-DATA_FILE = Path(__file__).with_name("assignments.json")
+FILE_NAME = "tasks.json"
 
 
-def load_assignments():
-    if DATA_FILE.exists():
-        with open(DATA_FILE, "r") as file:
+def load_tasks():
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "r") as file:
             return json.load(file)
     return []
 
 
-def save_assignments(assignments):
-    with open(DATA_FILE, "w") as file:
-        json.dump(assignments, file, indent=4)
+def save_tasks(tasks):
+    with open(FILE_NAME, "w") as file:
+        json.dump(tasks, file, indent=4)
 
 
-def add_assignment(assignments):
-    title = input("Enter assignment title: ")
+def create_task(tasks):
+    name = input("Enter task name: ")
     subject = input("Enter subject: ")
+    deadline = input("Enter deadline: ")
 
-    while True:
-        deadline = input("Enter deadline (YYYY-MM-DD): ")
-        try:
-            datetime.strptime(deadline, "%Y-%m-%d")
-            break
-        except ValueError:
-            print("Invalid date. Try again.")
-
-    assignment = {
-        "id": len(assignments) + 1,
-        "title": title,
+    task = {
+        "id": max([t["id"] for t in tasks], default=0) + 1,
+        "name": name,
         "subject": subject,
         "deadline": deadline,
-        "completed": False
+        "status": "Pending"
     }
 
-    assignments.append(assignment)
-    save_assignments(assignments)
+    tasks.append(task)
+    save_tasks(tasks)
+    print("Task created successfully!")
 
-    print("Assignment added successfully!")
+
+def view_tasks(tasks):
+    print("\n--- Student Tasks ---")
+    if not tasks:
+        print("No tasks available.")
+    for task in tasks:
+        print(task)
 
 
-def view_assignments(assignments):
-    if not assignments:
-        print("No assignments available.")
+def update_task(tasks):
+    view_tasks(tasks)
+
+    if not tasks:
         return
 
-    today = datetime.today().date()
+    task_id = int(input("\nEnter Task ID to update: "))
 
-    for assignment in assignments:
-        status = (
-            "Completed"
-            if assignment["completed"]
-            else "Pending"
-        )
+    for task in tasks:
+        if task["id"] == task_id:
+            task["name"] = input("Enter new task name: ")
+            task["subject"] = input("Enter new subject: ")
+            task["deadline"] = input("Enter new deadline: ")
 
-        deadline = datetime.strptime(
-            assignment["deadline"], "%Y-%m-%d"
-        ).date()
-
-        if not assignment["completed"] and deadline < today:
-            status = "Overdue"
-
-        print("\n-------------------------")
-        print("ID:", assignment["id"])
-        print("Title:", assignment["title"])
-        print("Subject:", assignment["subject"])
-        print("Deadline:", assignment["deadline"])
-        print("Status:", status)
-
-
-def update_assignment(assignments):
-    view_assignments(assignments)
-
-    try:
-        assignment_id = int(input("\nEnter assignment ID: "))
-    except ValueError:
-        print("Enter a valid ID.")
-        return
-
-    for assignment in assignments:
-        if assignment["id"] == assignment_id:
-            title = input("Enter new title: ").strip()
-            subject = input("Enter new subject: ").strip()
-
-            if not title or not subject:
-                print("Title and subject cannot be empty.")
-                return
-
-            assignment["title"] = title
-            assignment["subject"] = subject
-
-            save_assignments(assignments)
-            print("Assignment updated successfully!")
+            save_tasks(tasks)
+            print("Task updated successfully!")
             return
 
-    print("Assignment not found.")
-
-
-def complete_assignment(assignments):
-    view_assignments(assignments)
-
-    try:
-        assignment_id = int(input("\nEnter assignment ID: "))
-    except ValueError:
-        print("Enter a valid ID.")
-        return
-
-    for assignment in assignments:
-        if assignment["id"] == assignment_id:
-            if assignment["completed"]:
-                print("This assignment is already completed.")
-                return
-
-            assignment["completed"] = True
-            save_assignments(assignments)
-            print("Assignment marked as completed!")
-            return
-
-    print("Assignment not found.")
+    print("Task ID not found!")
 
 
 def main():
-    assignments = load_assignments()
+    tasks = load_tasks()
 
     while True:
-        print("\n===== STUDENT ASSIGNMENT TRACKER =====")
-        print("1. Add Assignment")
-        print("2. View Assignments")
-        print("3. Update Assignment")
-        print("4. Complete Assignment")
-        print("5. Exit")
+        print("\n===== STUDENT TASK MANAGEMENT =====")
+        print("1. Create Task")
+        print("2. View Tasks")
+        print("3. Update Task")
+        print("4. Exit")
 
-        choice = input("Enter your choice: ")
+        choice = input("Enter choice: ")
 
         if choice == "1":
-            add_assignment(assignments)
-
+            create_task(tasks)
         elif choice == "2":
-            view_assignments(assignments)
-
+            view_tasks(tasks)
         elif choice == "3":
-            update_assignment(assignments)
-
+            update_task(tasks)
         elif choice == "4":
-            complete_assignment(assignments)
-
-        elif choice == "5":
-            print("Thank you for using the application!")
             break
-
         else:
-            print("Invalid choice. Try again.")
+            print("Invalid choice!")
 
 
 if __name__ == "__main__":
