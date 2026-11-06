@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "name": "complete assignment",
+        "subject": "full stack",
+        "deadline": "10-11-2026",
+        "status": "Pending"
+    },
+    {
+        "id": 2,
+        "name": "study unit 2",
+        "subject": "maths",
+        "deadline": "11-11-2026",
+        "status": "Pending"
+    }
+]
